@@ -1,0 +1,27 @@
+{
+  "name": "intergalactic-t20",
+  "version": "0.0.1",
+  "description": "Implementation for https://www.geektrust.in/api/pdf/open/PS4",
+  "main": "index.js",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "lodash": "^4.17.10",
+    "youch": "^2.0.7",
+    "youch-terminal": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "one": "node index.js One",
+    "two": "node index.js Two"
+  },
+  "keywords": [
+    "ps4",
+    "geektrust"
+  ],
+  "author": "Kuldeep Anand (@mcraz)",
+  "license": "ISC"
+}
