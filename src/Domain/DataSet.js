@@ -12,7 +12,7 @@ class DataSet {
     static all(db = null) {
         const name = this.collectionName(db);
         
-        const data = require('./db/' + name)
+        const data = require('../../db/' + name)
         
         return data.slice();
     }
@@ -33,7 +33,7 @@ class DataSet {
         value = value.toUpperCase();
         
         for (let current of this.all()) {
-            if (current[key] === value) {
+            if (current[key].toUpperCase() === value) {
                 return new this(current);
             }
         }

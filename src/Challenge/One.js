@@ -1,8 +1,5 @@
-const _               = require("lodash");
-const Common          = require("../common");
-const Player          = require("../Domain/Player/Player");
-const SecondInning    = require("../Domain/Inning/SecondInning");
-const InningPresenter = require("../Domain/Inning/InningPresenter");
+const Replay = require("../Domain/Match/Replay");
+const Common = require('../common')
 
 /**
 * 
@@ -21,43 +18,25 @@ const InningPresenter = require("../Domain/Inning/InningPresenter");
 class One {
     
     constructor() {
-        this.present = new InningPresenter();
+        this.replay = new Replay();
     }
     
     async start() {
-        const inn = this.createInning();
-        
-        while(inn.isAllowedNext()) {
-            inn.nextBall();
-            
-            this.present.commentary(inn);
-        }
-        
-        this.present.scorecard(inn)
-        
-        this.verdict(inn)
-    }
-    
-    createInning() {
-        const inn = new SecondInning({
-            players: Player.fetchAll(),
-            overs: 20,
-            chasing: 40
-        });
-        
-        // set state to the 16th over, since we will be playing
-        // only the last four overs
-        inn.setState({ ballsDelivered: (20 - 4) * 6 });
+        const replayOvers = 4;
+        const chasingRuns = 40;
 
-        return inn;
+        Common.heading(`Replaying ${replayOvers}, chasing ${chasingRuns}`);
+        const win = this.replay.chase(chasingRuns, replayOvers);
+        
+        this.verdict(win)
     }
 
-    verdict(inn) {
-        if ( !inn.hasLost()) {
-            Common.heading("WON");
-        } else {
-            Common.heading('LOST', 'bgRed.white.bold')
+    verdict(win) {
+        if (win) {
+            return Common.heading("WON");
         }
+        
+        Common.heading('LOST', 'bgRed.white.bold')
     }
 }
 

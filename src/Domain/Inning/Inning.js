@@ -5,11 +5,11 @@ const Common = require("../../common");
 * You might smell a bit of a redux pattern "NOT REACT"
 * brewing up in this class. That is cz I have been
 * experimenting with that. Haven't tried react
-* but the idea of even-sourced-ish system
+* but the idea of event-sourced~ish system
 * is certainly enticing.
 */
 class Inning {
-    constructor({ players, overs }) {
+    constructor({ players, overs = 20 }) {
         this.data = {
             balls: overs * 6,
             players: players,
@@ -65,19 +65,20 @@ class Inning {
         this.validate();
 
         
-        const outcome = this.striker.hit();
+        const outcome = this.striker.attempt();
         
-        // const isOut = outcome === 7;
-        // const isRun = outcome !== 7;
-        // const isOdd = outcome % 2;
-        // const isOverChange = this.ballSeq() == 6;
+        const isOut = outcome === 7;
+        const isRun = outcome !== 7;
+        const isOdd = outcome % 2;
+        const isOverChange = this.ballSeq() == 6;
         
         this.onBall();
         this.onOutcome(outcome);
-        outcome === 7 && this.onStrikerOut();
-        outcome !== 7 && this.onStrikerHit(outcome);
-        outcome !== 7 && outcome % 2 && this.onOddRun();
-        this.ballSeq() == 6 && this.onOver();
+        
+        isOut && this.onStrikerOut();
+        isRun && this.onStrikerHit(outcome);
+        isRun && isOdd && this.onOddRun();
+        isOverChange && this.onOver();
     }
     
     validate() {

@@ -1,6 +1,6 @@
 {
   "name": "intergalactic-t20",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Implementation for https://www.geektrust.in/api/pdf/open/PS4",
   "main": "index.js",
   "dependencies": {
@@ -11,7 +11,9 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^5.1.1"
+    "growl": "^1.10.5",
+    "mocha": "^5.1.1",
+    "sinon": "^5.0.3"
   },
   "scripts": {
     "test": "mocha",

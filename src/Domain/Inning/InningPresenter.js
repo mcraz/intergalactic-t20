@@ -13,27 +13,39 @@ class InningPresenter {
         const { data, state, remainingRuns } = inn;
         const { players, balls } = data;
         
+        if (state.outcomes.length === 0) {
+        	// no plays yet
+        	return;
+        }
+
         const [i, outcome] = _.last(state.outcomes);
         const what = outcome === 7 ? "OUT" : outcome;
         const name = _.padEnd(players[i].name, 15);
         const overAndBall = inn.describeOverBall(".");
-        const [over, ball] = overAndBall.split(".").map(parseFloat);
         
         if (inn.ballSeq() === 1 && inn.remainingRuns) {
-            let msg = `${balls / 6 - over + 1} overs left.`;
-            
-            if (inn.remainingRuns) {
-                msg += `${inn.remainingRuns} runs to win\n`;
-            }
-            
-            Common.zero(msg);
-        }
-        
+            this.showOverStats(overAndBall, inn, balls, outcome);
+        }        
+
         Common.dim(`${overAndBall} : ${name} : ${what}`);
     }
     
+    showOverStats(overAndBall, inn, balls, outcome) {
+        const [over, ball] = overAndBall.split(".").map(parseFloat);
+        
+        
+        let msg = `${balls / 6 - over + 1} overs left`;
+        
+        if (inn.remainingRuns) {
+            msg += ` with ${inn.remainingRuns + outcome} runs to win\n`;
+        }
+    
+        Common.zero(msg);
+        
+    }
+
     scorecard(inn) {
-        const players = inn.data.players;
+        const players  = inn.data.players;
         const outcomes = inn.state.outcomes;
         
         const groupdByPlayer = _.groupBy(outcomes, 0);
@@ -41,22 +53,26 @@ class InningPresenter {
         const messages = [];
         
         for (let i in players) {
-            const plays = groupdByPlayer[i];
+            const plays  = groupdByPlayer[i];
             const player = players[i];
             
-            const out = plays && _.last(plays)[1] === 7;
-            const scores = !out ? plays : _.initial(plays);
-            const balls = _.size(plays);
-            const runs = _.sumBy(scores, 1);
+            const message = this.getPlayerScorecard(player, plays);
             
-            messages.push(
-                `${player.name}${balls && out ? "" : "*"} : ${runs} (${balls} balls)`
-            );
+            messages.push(message);
         }
         
         Common.zero('\n');
 
         Common.list(messages);
+    }
+
+    getPlayerScorecard(player, plays) {
+        const out    = plays && _.last(plays)[1] === 7;
+        const scores = !out ? plays : _ .initial(plays);
+        const balls  = _.size(plays);
+        const runs   = _.sumBy(scores, 1);
+        
+        return `${player.name}${balls && !out ? "*" : ""} : ${runs} (${balls} balls)`;
     }
 }
 

@@ -1,9 +1,5 @@
-const _               = require("lodash");
-const Common          = require("../common");
-const Player          = require("../Domain/Player/Player");
-const Inning          = require("../Domain/Inning/Inning");
-const SecondInning    = require("../Domain/Inning/SecondInning");
-const InningPresenter = require("../Domain/Inning/InningPresenter");
+const Common    = require("../common");
+const SuperOver = require("../Domain/Match/SuperOver");
 
 /**
 * 
@@ -20,56 +16,23 @@ const InningPresenter = require("../Domain/Inning/InningPresenter");
 class Two {
     
     constructor() {
-        this.present = new InningPresenter();
+        this.superOver = new SuperOver();
     }
     
     async start() {
         Common.heading("First Inning");
-        const first  = this.firstInning();
-        const target = first.state.runs;
+        const target = this.superOver.first("llc");
+        
+        Common.heading(`Second Inning | Chasing ${target} runs`);
+        const win = this.superOver.chase("esq", target);
 
-        if (!target) {
-            this.verdict(false);
-        }
-
-        Common.heading(`Second Inning. Target: ${target}`)
-        const second = this.secondInning(target);
-
-        this.verdict(second.hasLost());
-    }
-
-    firstInning() {
-        const players = Player.fetchAll("players-2llc");
-        const inn     = new Inning({ overs: 1, players });
-        return this.play(inn);
-    }
-
-    secondInning(target) {
-        const players = Player.fetchAll("players-2esq");
-        const inn     = new SecondInning({
-          overs  : 1,
-          chasing: target,
-          players,
-        });
-        return this.play(inn);
-    }
-
-    play(inn) {
-        while (inn.isAllowedNext()) {
-          inn.nextBall();
-
-          this.present.commentary(inn);
-        }
-
-        this.present.scorecard(inn);
-
-        return inn;
+        this.verdict(win);
     }
 
     verdict(win) {
-        win 
-            ? Common.heading("Lengaburu won") 
-            : Common.heading("Enchai won");
+        const victor = win ? "Enchai" : "Lengaburu";
+        
+        Common.heading(`${victor} won`);
     }
 }
 

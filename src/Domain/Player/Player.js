@@ -25,7 +25,7 @@ class Player extends DataSet {
 	 * 
 	 * @returns {Number} Outcome of the batting
 	 */
-	hit() {
+	attempt() {
 		return Common.weightedRand(this.weights);
 	}
 }

@@ -1,8 +1,19 @@
 const _ = require("lodash");
-const Youch = require('youch');
 const chalk = require("chalk");
-const readline = require("readline");
+const Youch = require('youch');
 const YouchTerminal = require('youch-terminal');
+
+let silenced;
+
+/**
+ * Used to silence writing to console when testing
+ * or if you just like silence :D
+ * 
+ * @param {Boolean} yes 
+ */
+function silent(yes = true) {
+    silenced = yes;
+}
 
 /**
  * Add padding to given string so that is shows up at the
@@ -15,7 +26,7 @@ function center(str, print = false) {
     
     str = _.pad(str, w <= 130 ? w-2 : w/2)
 
-    print && zero(str)
+    print && zero(str, true)
 
     return str;
 }
@@ -28,7 +39,7 @@ function center(str, print = false) {
 function heading(message, style = "white.bgGreen.bold") {
     style = _.get(chalk, style, chalk.white)
 
-    console.log('\n' + style(center(message)) + '\n');
+    zero('\n' + style(center(message)) + '\n', true);
 }
 
 /**
@@ -37,7 +48,7 @@ function heading(message, style = "white.bgGreen.bold") {
  * @param {String} message 
  */
 function dim(message) {
-    console.log(chalk.dim(message));
+    zero(chalk.dim(message), true);
 }
 
 function list(lines) {
@@ -46,9 +57,8 @@ function list(lines) {
 
     lines = lines.map(line => ' '.repeat(Math.abs(Math.floor(w/2 - avg/2))) + line)
     
-    console.log(lines.join('\n'));
+    zero(lines.join('\n'), true);
 }
-
 
 /**
  * Clear the line, move cursor to start of the line. And
@@ -56,11 +66,12 @@ function list(lines) {
  * 
  * @param {String} message 
  */
-function zero(message = null) {
+function zero(message = null, newLine = false) {
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
 
-    if (message) {
+    if (message && !silenced) {
+        message += newLine ? "\n" : "";
         process.stdout.write(message);
     }
 }
@@ -150,5 +161,5 @@ module.exports = {
     weightedRand,
     
     // cli styling helpers
-    center, heading, zero, list, dim
+    center, heading, zero, list, dim, silent
 };
